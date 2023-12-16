@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
-	"log"
+	"html/template"
 	"net/http"
 	"strconv"
-	"text/template"
 )
 
-func home(w http.ResponseWriter, r *http.Request) {
+func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
@@ -22,34 +21,40 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		log.Print(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		//log.Print(err.Error())
+		//app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
+		app.serverError(w, r, err)
+		//http.Error(w, "internal server error", http.StatusInternalServerError)
 		return
 	}
 
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		log.Print(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		//log.Print(err.Error())
+		//app.logger.Error(err.Error(), "method", r.Method, "uri", r.URL.RequestURI())
+		app.serverError(w, r, err)
+		http.Error(w, "internal server error", http.StatusInternalServerError)
 	}
 }
 
-func snippetView(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("id")
 	id, err := strconv.Atoi(query)
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		//http.NotFound(w, r)
+		app.notFound(w)
 		return
 	}
 
-	fmt.Fprint(w, "Display a specific snippet with ID %d...", id)
+	fmt.Fprintf(w, "Display a specific snippet with ID %d...", id)
 	//w.Write([]byte("Display a specific snippet..."))
 }
 
-func snippetCreate(w http.ResponseWriter, r *http.Request) {
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.Header().Set("Allow", "POST")
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		//http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		return
 	}
 

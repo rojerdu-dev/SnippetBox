@@ -12,39 +12,23 @@ type application struct {
 }
 
 func main() {
-	// addr flag
+	// set address at runtime
 	addr := flag.String("addr", ":8080", "HTTP network address")
 	flag.Parse()
 
 	// structured logging
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
-	// init new instance of application struct containing the
-	// dependencies (for now just structured logging)
 	app := &application{
 		logger: logger,
 	}
 
-	// mux
-	mux := http.NewServeMux()
-
-	// file serve & handlers
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
-
 	// start server
-	//log.Printf("starting server on %s\n", *addr)
-	logger.Info("starting server", "address", *addr)
+	logger.Info("starting server", "addr", *addr)
 
-	// handle errors
-	err := http.ListenAndServe(*addr, mux)
+	// call new app.routes() method to get servemux containing our routes
+	// pass to http.ListenAndServe
+	err := http.ListenAndServe(*addr, app.routes())
 	logger.Error(err.Error())
 	os.Exit(1)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 }

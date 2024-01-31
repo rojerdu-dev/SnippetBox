@@ -25,23 +25,16 @@ func home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	if r.Method == "GET" {
-		_, err := w.Write([]byte("home page for project"))
-		if err != nil {
-			log.Printf("home http.ResponseWriter failed to write: %s", err)
-			return
-		}
-	}
+	w.Write([]byte("home page for project"))
 }
 
 func snippetCreate(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		_, err := w.Write([]byte("Display a specific snippet ..."))
-		if err != nil {
-			log.Printf("snippetCreate http.ResponseWriter failed to write: %s", err)
-			return
-		}
+	if r.Method != "POST" {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte("Method Not Allowed"))
+		return
 	}
+	w.Write([]byte("Display a specific snippet ..."))
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {

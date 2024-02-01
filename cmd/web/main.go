@@ -23,7 +23,6 @@ func main() {
 	mux.HandleFunc("/snippet/view", snippetView)
 	mux.HandleFunc("/snippet/create", snippetCreate)
 
-	//logger.Info("starting server", "addr", *addr)
 	logger.Info("starting server", slog.String("addr", *addr))
 
 	if err := http.ListenAndServe(*addr, mux); err != nil {

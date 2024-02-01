@@ -22,18 +22,9 @@ func main() {
 		logger: logger,
 	}
 
-	mux := http.NewServeMux()
-
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
-
 	logger.Info("starting server", slog.String("addr", *addr))
 
-	if err := http.ListenAndServe(*addr, mux); err != nil {
+	if err := http.ListenAndServe(*addr, app.routes()); err != nil {
 		log.Fatal(err)
 	}
 }

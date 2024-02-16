@@ -21,27 +21,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, http.StatusOK, "home.html", templateData{
 		Snippets: snippets,
 	})
-	//
-	//files := []string{
-	//	"./ui/html/base.html",
-	//	"./ui/html/partials/nav.html",
-	//	"./ui/html/pages/home.html",
-	//}
-	//
-	//ts, err := template.ParseFiles(files...)
-	//if err != nil {
-	//	app.serveError(w, r, err)
-	//	return
-	//}
-	//
-	//data := templateData{
-	//	Snippets: snippets,
-	//}
-	//
-	//err = ts.ExecuteTemplate(w, "base", data)
-	//if err != nil {
-	//	app.serveError(w, r, err)
-	//}
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
@@ -80,26 +59,4 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, http.StatusOK, "view.html", templateData{
 		Snippet: snippet,
 	})
-	//
-	//files := []string{
-	//	"./ui/html/base.html",
-	//	"./ui/html/partials/nav.html",
-	//	"./ui/html/pages/view.html",
-	//}
-	//
-	//ts, err := template.ParseFiles(files...)
-	//if err != nil {
-	//	app.serveError(w, r, err)
-	//	return
-	//}
-	//
-	//data := templateData{
-	//	Snippet: snippet,
-	//}
-	//
-	//err = ts.ExecuteTemplate(w, "base", data)
-	//if err != nil {
-	//	app.serveError(w, r, err)
-	//	return
-	//}
 }

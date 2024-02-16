@@ -4,19 +4,19 @@ linters:
     - bodyclose
     - dogsled
     - dupl
-#    - errcheck
+    - errcheck
     - exportloopref
     - funlen
     - gochecknoinits
-#    - gocritic
+    - gocritic
     - goconst
     - gocyclo
     - gofumpt
     - goimports
-#    - revive
+    - revive
     - rowserrcheck
     - goprintffuncname
-#    - gosec
+    - gosec
     - gosimple
     - govet
     - ineffassign
@@ -32,3 +32,13 @@ linters:
     - unparam
     - unused
     - whitespace
+
+disable:
+#  - name_of_linter
+
+issues:
+  exclude-rules:
+    - path: main.go
+      linters:
+        - gocritic
+        - gosec

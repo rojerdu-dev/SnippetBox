@@ -1,9 +1,11 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 func (app *application) serveError(w http.ResponseWriter, r *http.Request, err error) {
@@ -30,10 +32,26 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	if !ok {
 		err := fmt.Errorf("the template %s does not exist", page)
 		app.serveError(w, r, err)
+		return
 	}
-	w.WriteHeader(status)
-	err := ts.ExecuteTemplate(w, "base", data)
+
+	buf := new(bytes.Buffer)
+	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
 		app.serveError(w, r, err)
+		return
+	}
+
+	w.WriteHeader(status)
+
+	// explicitly ignore error
+	_, _ = buf.WriteTo(w)
+}
+
+// TODO: use parameter later on
+// explicitly ignore parameter for now
+func (app *application) newTemplateData(_ *http.Request) templateData {
+	return templateData{
+		CurrentYear: time.Now().Year(),
 	}
 }

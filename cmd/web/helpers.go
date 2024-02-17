@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func (app *application) serveError(w http.ResponseWriter, r *http.Request, err error) {
+func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	var (
 		method = r.Method
 		uri    = r.URL.RequestURI()
@@ -31,14 +31,14 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	ts, ok := app.templateCache[page]
 	if !ok {
 		err := fmt.Errorf("the template %s does not exist", page)
-		app.serveError(w, r, err)
+		app.serverError(w, r, err)
 		return
 	}
 
 	buf := new(bytes.Buffer)
 	err := ts.ExecuteTemplate(buf, "base", data)
 	if err != nil {
-		app.serveError(w, r, err)
+		app.serverError(w, r, err)
 		return
 	}
 

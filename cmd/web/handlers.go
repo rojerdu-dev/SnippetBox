@@ -50,12 +50,6 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	data := app.newTemplateData(r)
 	app.render(w, r, http.StatusOK, "create.html", data)
-
-	//_, err := w.Write([]byte("Display the form for creating a new snippet..."))
-	//if err != nil {
-	//	app.logger.Error("http.ResponseWriter write error: failed to write []byte()")
-	//	return
-	//}
 }
 
 func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request) {

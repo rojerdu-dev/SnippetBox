@@ -2,11 +2,31 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"github.com/go-playground/form/v4"
 	"net/http"
 	"runtime/debug"
 	"time"
 )
+
+func (app *application) decodePostForm(r *http.Request, dst any) error {
+	err := r.ParseForm()
+	if err != nil {
+		return err
+	}
+
+	err = app.formDecoder.Decode(dst, r.PostForm)
+	if err != nil {
+		var invalidDecodeError *form.InvalidDecoderError
+		if errors.As(err, &invalidDecodeError) {
+			panic(err)
+		}
+		return err
+	}
+
+	return nil
+}
 
 func (app *application) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	var (
@@ -48,10 +68,9 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, status in
 	_, _ = buf.WriteTo(w)
 }
 
-// TODO: use parameter later on
-// explicitly ignore parameter for now
-func (app *application) newTemplateData(_ *http.Request) templateData {
+func (app *application) newTemplateData(r *http.Request) templateData {
 	return templateData{
 		CurrentYear: time.Now().Year(),
+		Flash:       app.sessionManager.PopString(r.Context(), "flash"),
 	}
 }

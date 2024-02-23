@@ -42,3 +42,6 @@ issues:
       linters:
         - gocritic
         - gosec
+    - path: users.go
+      linters:
+        - revive

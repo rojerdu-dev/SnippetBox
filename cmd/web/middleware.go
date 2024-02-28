@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/justinas/nosurf"
 	"net/http"
 )
 
@@ -41,6 +42,17 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 		app.logger.Info("received request", "ip", ip, "proto", proto, "method", method, "uri", uri)
 		next.ServeHTTP(w, r)
 	})
+}
+
+func noSurf(next http.Handler) http.Handler {
+	csrfHandler := nosurf.New(next)
+	csrfHandler.SetBaseCookie(http.Cookie{
+		Path:     "/",
+		Secure:   true,
+		HttpOnly: true,
+	})
+
+	return csrfHandler
 }
 
 func secureHeaders(next http.Handler) http.Handler {
